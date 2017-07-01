@@ -1,0 +1,21 @@
+How to Sign an app in android?
+
+Step 1: Generate Keystore (only once)
+
+You need to generate a keystore once and use it to sign your unsigned apk. Use the keytool provided by the JDK found in %JAVA_HOME%/bin/
+
+keytool -genkey -v -keystore my.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias app
+
+Step 2: Zipalign
+
+zipalign which is a tool provided by the Android SDK found in e.g. %ANDROID_HOME%/sdk/build-tools/24.0.2/ is a mandatory optimization step if you want to upload the apk to the Play Store.
+
+zipalign 4 -p my.apk my-aligned.apk
+
+Step 3: Sign & Verify
+
+Using build-tools 24.0.3 and newer
+
+Android 7.0 introduces APK Signature Scheme v2, a new app-signing scheme that offers faster app install times and more protection against unauthorized alterations to APK files (See here and here for more details). Therefore, Google implemented their own apk signer called apksigner (duh!) The script file can be found in %ANDROID_HOME%/sdk/build-tools/24.0.3/ (the .jar is in the /lib subfolder). Use it like this
+
+apksigner sign --ks my.keystore my-app.apk --ks-key-alias alias_name
